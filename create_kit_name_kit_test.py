@@ -1,9 +1,12 @@
 import pytest
-from sender_stand_request import post_new_user, post_new_client_kit
-from data import user_body
+from sender_stand_request import create_user, post_new_client_kit
+import data
 
 def auth_token():
-    return post_new_user()
+    response = create_user(data.user_body)
+    assert response.status_code == 201, f"Expected status code 201, got {response.status_code}"
+    return response.json().get("authToken")
+
 def positive_assert(kit_body, auth_token):
     response = post_new_client_kit(kit_body, auth_token)
     assert response.status_code == 201
