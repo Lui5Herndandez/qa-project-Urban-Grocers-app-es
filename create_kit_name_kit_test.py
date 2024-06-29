@@ -2,6 +2,11 @@ import pytest
 from sender_stand_request import create_user, post_new_client_kit
 import data
 
+def get_kit_body(name):
+    body = (kit_body)
+    body["Luis"] = name
+    return body
+
 def auth_token():
     response = create_user(data.user_body)
     assert response.status_code == 201, f"Expected status code 201, got {response.status_code}"
@@ -16,9 +21,10 @@ def negative_assert_code_400(kit_body, auth_token):
     response = post_new_client_kit(kit_body, auth_token)
     assert response.status_code == 400
 
-def test_name_length_1(auth_token):
-    kit_body = get_kit_body("a")
-    positive_assert(kit_body, auth_token)
+def test_name_length_0():
+    token_auth = auth_token()
+    kit_body = get_kit_body("")
+    negative_assert_code_400(kit_body, token_auth)
 
 def test_name_length_511(auth_token):
     name = {

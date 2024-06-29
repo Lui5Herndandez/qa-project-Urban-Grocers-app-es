@@ -2,6 +2,12 @@
 
 Este proyecto automatiza las pruebas para la creación de kits de productos en la aplicación Urban Grocers.
 
+## Descripción de las tecnologías utilizadas
+
+- **Python**: El lenguaje principal utilizado para la automatización de pruebas.
+- **Pytest**: Un marco de pruebas utilizado para escribir y ejecutar pruebas automatizadas.
+- **Requests**: Una biblioteca para hacer solicitudes HTTP, utilizada para probar API.
+
 ## Configuración
 
 1. Clonar el repositorio:
@@ -17,4 +23,4 @@ Este proyecto automatiza las pruebas para la creación de kits de productos en l
 
 Utiliza `pytest` para ejecutar las pruebas:
 ```sh
-pytest
+pytest C:\Users\luish\Documents\Tripleten\Sprint 7\qa-project-Urban-Grocers-app-es\data.py"
