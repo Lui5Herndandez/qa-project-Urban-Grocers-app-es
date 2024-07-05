@@ -1,32 +1,39 @@
-import pytest
 from sender_stand_request import create_user, post_new_client_kit
 import data
 
+
 def get_kit_body(name):
-    body = (kit_body)
+    body = data.kit_body.copy()
     body["Luis"] = name
     return body
 
+
 def auth_token():
-    response = create_user(data.user_body)
+    response = create_user()
     assert response.status_code == 201, f"Expected status code 201, got {response.status_code}"
     return response.json().get("authToken")
 
-def positive_assert(kit_body, auth_token):
-    response = post_new_client_kit(kit_body, auth_token)
+
+def positive_assert(kit_body, token):
+    headers = {"Authorization": f"Bearer {token}"}
+    response = post_new_client_kit(kit_body, headers=headers)
     assert response.status_code == 201
     assert response.json()['name'] == kit_body['name']
 
-def negative_assert_code_400(kit_body, auth_token):
-    response = post_new_client_kit(kit_body, auth_token)
+
+def negative_assert_code_400(kit_body, token):
+    headers = {"Authorization": f"Bearer {token}"}
+    response = post_new_client_kit(kit_body, headers=headers)
     assert response.status_code == 400
 
 def test_name_length_0():
-    token_auth = auth_token()
+    token = auth_token()
     kit_body = get_kit_body("")
-    negative_assert_code_400(kit_body, token_auth)
+    negative_assert_code_400(kit_body,token)
 
-def test_name_length_511(auth_token):
+
+def test_name_length_511():
+    token = auth_token()
     name = {
         "Abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabc"
         "dabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcda"
@@ -35,13 +42,11 @@ def test_name_length_511(auth_token):
         "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabC"}
 
     kit_body = get_kit_body(name)
-    positive_assert(kit_body, auth_token)
+    positive_assert(kit_body, token)
 
-def test_name_length_0(auth_token):
-    kit_body = get_kit_body("")
-    negative_assert_code_400(kit_body, auth_token)
 
-def test_name_length_512(auth_token):
+def test_name_length_512():
+    token = auth_token()
     name = {
         "Abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab"
         "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -49,24 +54,34 @@ def test_name_length_512(auth_token):
         "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcD"}
     kit_body = get_kit_body(name)
-    negative_assert_code_400(kit_body, auth_token)
+    negative_assert_code_400(kit_body, token)
 
-def test_special_characters(auth_token):
+
+def test_special_characters():
+    token = auth_token()
     kit_body = get_kit_body("№%@")
-    positive_assert(kit_body, auth_token)
+    positive_assert(kit_body, token)
 
-def test_spaces(auth_token):
+
+def test_spaces():
+    token = auth_token()
     kit_body = get_kit_body(" A Aaa ")
-    positive_assert(kit_body, auth_token)
+    positive_assert(kit_body, token)
 
-def test_numbers(auth_token):
+
+def test_numbers():
+    token = auth_token()
     kit_body = get_kit_body("123")
-    positive_assert(kit_body, auth_token)
+    positive_assert(kit_body,token)
 
-def test_no_name_parameter(auth_token):
+
+def test_no_name_parameter():
+    token = auth_token()
     kit_body = {}
-    negative_assert_code_400(kit_body, auth_token)
+    negative_assert_code_400(kit_body, token)
 
-def test_name_as_number(auth_token):
+
+def test_name_as_number():
+    token = auth_token()
     kit_body = get_kit_body(123)
-    negative_assert_code_400(kit_body, auth_token)
+    negative_assert_code_400(kit_body, token)
