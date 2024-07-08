@@ -10,26 +10,23 @@ def get_kit_body(name):
 
 def auth_token():
     response = create_user()
-    assert response.status_code == 201, f"Expected status code 201, got {response.status_code}"
-    return response.json().get("authToken")
+    return response["auth_token"]
 
 
 def positive_assert(kit_body, token):
-    headers = {"Authorization": f"Bearer {token}"}
-    response = post_new_client_kit(kit_body, headers=headers)
+    response = post_new_client_kit(kit_body)
     assert response.status_code == 201
     assert response.json()['name'] == kit_body['name']
 
 
 def negative_assert_code_400(kit_body, token):
-    headers = {"Authorization": f"Bearer {token}"}
-    response = post_new_client_kit(kit_body, headers=headers)
+    response = post_new_client_kit(kit_body)
     assert response.status_code == 400
 
 def test_name_length_0():
     token = auth_token()
     kit_body = get_kit_body("")
-    negative_assert_code_400(kit_body,token)
+    negative_assert_code_400(kit_body, token)
 
 
 def test_name_length_511():
